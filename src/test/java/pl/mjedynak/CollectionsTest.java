@@ -1,5 +1,7 @@
 package pl.mjedynak;
 
+import com.gs.collections.api.list.MutableList;
+import com.gs.collections.impl.list.mutable.FastList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,10 +46,14 @@ public class CollectionsTest {
 
         List<Person> resultJava8 = people.stream().filter(p -> p.getAge() == 23).collect(toList());
 
+        MutableList<Person> gsPeople = FastList.newList(people);
+        MutableList<Person> resultWithGSCollections = gsPeople.select(p -> p.getAge() == 23);
+
         List<Person> expectedResult = asList(shinji, tom);
         assertThat(resultIteratively, is(expectedResult));
         assertThat(resultWithLambda, is(expectedResult));
         assertThat(resultJava8, is(expectedResult));
+        assertThat(resultWithGSCollections, is(expectedResult));
     }
 
     @Test
@@ -61,10 +67,14 @@ public class CollectionsTest {
 
         int resultWithJava8 = people.stream().mapToInt(Person::getAge).sum();
 
+        MutableList<Person> gsPeople = FastList.newList(people);
+        int resultWithGSCollections = (int) gsPeople.sumOfInt(Person::getAge);
+
         int expectedResult = 75;
         assertThat(resultIteratively, is(expectedResult));
         assertThat(resultWithLambda, is(expectedResult));
         assertThat(resultWithJava8, is(expectedResult));
+        assertThat(resultWithGSCollections, is(expectedResult));
     }
 
 }
