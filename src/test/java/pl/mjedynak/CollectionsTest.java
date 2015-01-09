@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.max;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 import static ch.lambdaj.Lambda.sum;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class LambdaJTest {
+public class CollectionsTest {
 
     private List<Person> people;
     private Person robin;
@@ -42,9 +42,12 @@ public class LambdaJTest {
 
         List<Person> resultWithLambda = select(people, having(on(Person.class).getAge(), equalTo(23)));
 
+        List<Person> resultJava8 = people.stream().filter(p -> p.getAge() == 23).collect(toList());
 
-        assertThat(resultIteratively, is(asList(shinji, tom)));
-        assertThat(resultWithLambda, is(asList(shinji, tom)));
+        List<Person> expectedResult = asList(shinji, tom);
+        assertThat(resultIteratively, is(expectedResult));
+        assertThat(resultWithLambda, is(expectedResult));
+        assertThat(resultJava8, is(expectedResult));
     }
 
     @Test
@@ -56,8 +59,12 @@ public class LambdaJTest {
 
         int resultWithLambda = sum(people, on(Person.class).getAge());
 
-        assertThat(resultIteratively, is(75));
-        assertThat(resultWithLambda, is(75));
+        int resultWithJava8 = people.stream().mapToInt(Person::getAge).sum();
+
+        int expectedResult = 75;
+        assertThat(resultIteratively, is(expectedResult));
+        assertThat(resultWithLambda, is(expectedResult));
+        assertThat(resultWithJava8, is(expectedResult));
     }
 
 }
